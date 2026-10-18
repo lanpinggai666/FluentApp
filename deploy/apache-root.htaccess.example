@@ -1,0 +1,19 @@
+# 用法：仅当你无法把 Apache 文档根改成 public/ 时使用 —— 复制到项目根，命名 .htaccess
+# 能改文档根就一定改，这是兜底而非等价方案（Nginx/IIS 不读这个文件）。
+
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # 1) 内部目录：直接 403，绝不落到应用里
+    RewriteRule ^(config|core|models|services|controllers|views|tests|tools|database)(/|$) - [F]
+
+    # 2) 隐藏文件与数据文件
+    RewriteRule (^|/)\.(env|git|htaccess|htpasswd) - [F]
+    RewriteRule \.(sql|sqlite|sqlite-wal|sqlite-shm|log|bak|orig|dev)$ - [F]
+
+    # 3) 其余请求改写到 public/，交给前端控制器
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>

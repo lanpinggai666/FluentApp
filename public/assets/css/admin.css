@@ -1,0 +1,438 @@
+/* ========================================================
+   移动端适配层 (置于文件末尾赢得层叠优先级)
+   ≤768px：侧边栏抽屉化 + 内容单列/双列紧凑网格
+   ≤600px：顶栏极简（隐藏站点名与提交按钮文字）
+   ≤380px：进一步紧凑（卡片矮化、hero 上下堆叠）
+   ======================================================== */
+@media (max-width: 768px) {
+  /* —— 顶栏 —— */
+  .navbar-container {
+    padding: 0 10px 0 4px;
+    gap: 10px;
+  }
+  .navbar-brand-wrapper {
+    gap: 4px;
+    padding-left: 2px;
+  }
+  .brand { gap: 8px; }
+  .search-wrapper {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: none;
+  }
+  .search-input-group { padding: 7px 12px; }
+  .search-input { min-width: 0; }
+  .nav-actions { gap: 4px; }
+
+  /* —— 侧边栏：抽屉化（默认移出屏幕，body.sidebar-open 时滑入） —— */
+  .sidebar,
+  .sidebar.collapsed,
+  html.sidebar-init-collapsed .sidebar {
+    position: fixed !important;
+    top: 62px !important;
+    bottom: auto !important;
+    height: calc(100vh - 62px) !important;
+    left: 0 !important;
+    width: min(84vw, 300px) !important;
+    padding: 14px 12px 28px !important;
+    transform: translateX(-105%);
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease;
+    box-shadow: none;
+    z-index: 60;
+  }
+  body.sidebar-open .sidebar,
+  body.sidebar-open .sidebar.collapsed {
+    transform: translateX(0);
+    box-shadow: 20px 0 44px rgba(0, 0, 0, 0.22);
+  }
+  .sidebar-scrim {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.42);
+    z-index: 55;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  body.sidebar-open .sidebar-scrim {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .content-area,
+  .sidebar.collapsed ~ .content-area,
+  html.sidebar-init-collapsed .content-area {
+    margin-left: 0 !important;
+    padding: 14px 16px 28px;
+  }
+  /* 折叠图标态类在移动端一律还原为完整抽屉内容 */
+  .sidebar.collapsed .sidebar-title,
+  .sidebar.collapsed .category-name,
+  .sidebar.collapsed .category-count,
+  html.sidebar-init-collapsed .sidebar .sidebar-title,
+  html.sidebar-init-collapsed .sidebar .category-name,
+  html.sidebar-init-collapsed .sidebar .category-count {
+    display: revert !important;
+  }
+  .sidebar.collapsed .category-link,
+  html.sidebar-init-collapsed .sidebar .category-link {
+    justify-content: space-between !important;
+    padding: 10px 12px !important;
+    width: 100% !important;
+  }
+  .sidebar.collapsed .sidebar-header,
+  html.sidebar-init-collapsed .sidebar .sidebar-header {
+    justify-content: space-between !important;
+    padding: 2px 6px 8px !important;
+  }
+
+  /* —— 首页 —— */
+  .software-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .software-card { min-height: 0; }
+  .card-banner-wrapper { height: 110px; }
+  .toolbar-title { font-size: 1.125rem; }
+  .sort-chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    max-width: 100%;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+  }
+  .sort-chips::-webkit-scrollbar { display: none; }
+  .sort-chip {
+    white-space: nowrap;
+    flex: 0 0 auto;
+    height: 30px;
+    padding: 0 10px;
+    gap: 4px;
+    font-size: 0.75rem;
+  }
+
+  /* —— 详情页 —— */
+  .ms-store-layout { padding: 0 16px 48px; }
+  .ms-hero-wrapper { padding: 18px 0 18px; }
+  .ms-hero-top {
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 10px;
+  }
+  .ms-hero-icon-column { flex: 0 0 72px; width: 72px; }
+  .ms-app-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 13px;
+    padding: 5px;
+  }
+  .ms-app-title { font-size: 1.375rem; }
+  .ms-hero-description { font-size: 0.875rem; }
+  .ms-hero-actions { flex-wrap: wrap; gap: 8px; }
+  .btn-store-hero-download {
+    flex: 1 1 100%;
+    width: auto;
+    height: 42px;
+  }
+  .ms-hero-notice.md-notice { padding: 10px 12px; }
+  .ms-page-gradient-bg {
+    width: 100%;
+    left: 0;
+    transform: none;
+    height: 460px;
+  }
+
+  /* —— 详情页卡片：防横向溢出 —— */
+  .ms-card {
+    min-width: 0;
+    overflow: hidden;
+  }
+  .btn-store-secondary,
+  .btn-store-pill {
+    white-space: normal;
+    height: auto;
+    min-height: 38px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+  .github-readme-rendered h1 { font-size: 1.25rem; }
+  .github-readme-rendered h2 { font-size: 1.125rem; }
+
+  /* —— 详情页吸顶栏 —— */
+  .ms-sticky-bar {
+    left: 12px;
+    width: calc(100% - 24px);
+    max-width: none;
+    padding: 0 14px;
+  }
+
+  /* —— FAB —— */
+  .fab-submit {
+    right: 16px;
+    bottom: 16px;
+    width: 48px;
+    height: 48px;
+  }
+
+  /* —— 弹框 —— */
+  .modal-overlay { padding: 10px; }
+  .modal-container { max-height: 94vh; }
+  .modal-body { padding: 14px; }
+  .modal-footer { padding: 12px 14px; }
+  .modal-footer .btn-store-primary,
+  .modal-footer .btn-store-secondary {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* —— 表单外壳（提交页等内联 padding 的容器） —— */
+  .form-shell { padding: 18px !important; }
+
+  /* —— Markdown 编辑器防横向外溢（长行由 CodeMirror 内部滚动） —— */
+  .EasyMDEContainer {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+}
+
+@media (max-width: 600px) {
+  .brand-name-text { display: none; }
+  .btn-navbar-submit span { display: none; }
+  .btn-navbar-submit { padding: 0 11px; }
+}
+
+@media (max-width: 380px) {
+  .software-grid { gap: 10px; }
+  .card-banner-wrapper { height: 96px; }
+  .ms-hero-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+ * 移动端后台（窄屏适配）
+ *
+ * 为什么单独写这一段：后台的 DOM 与前台不共用（没有 #main-sidebar、.content-area、
+ * body.sidebar-open 那些东西），前台 style.css 里那套侧栏响应式规则一条都落不到
+ * .admin-* 上，所以手机上看后台等于看一个 230px 侧栏 + 撑破屏幕的表格。
+ *
+ * 另外顶栏/卡片的间距多处是行内 style，媒体查询按权重打不过行内声明，
+ * 这里只在窄屏段用 !important 兜住，别处的样式覆盖请不要学这个写法。
+ * ───────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .admin-layout {
+    flex-direction: column;
+    padding: 12px;
+    gap: 12px;
+  }
+
+  /* 侧栏从「左侧固定 230px」变成内容区上方的一条导航 */
+  .admin-sidebar {
+    width: 100% !important;
+    flex: 0 0 auto;
+    position: static;
+    max-height: none;
+  }
+  .admin-sidebar .sidebar-card {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px;
+  }
+  .admin-sidebar .sidebar-card a {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .navbar-container { padding: 0 12px !important; }
+  .admin-brand-title {
+    display: inline-block;
+    max-width: 54vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  .nav-actions { gap: 8px !important; }
+  /* 「前台首页」这类按钮在手机上只留图标，文字让给更必要的元素 */
+  .nav-actions .btn-store-secondary span { display: none; }
+
+  .admin-card { padding: 14px !important; }
+  .admin-table { font-size: 0.8125rem; }
+  .admin-table th,
+  .admin-table td { padding: 8px 6px; }
+  .admin-table th:last-child,
+  .admin-table td:last-child { min-width: 96px; }
+
+  /* 弹窗：行内写死 540/600/640/800px 的容器在手机上必然溢出 */
+  .modal-container {
+    max-width: calc(100vw - 20px) !important;
+    width: calc(100vw - 20px) !important;
+    max-height: calc(100vh - 24px);
+  }
+  .btn-modal-action { min-width: 0 !important; flex: 1; }
+
+  /* 各视图里行内 grid-template-columns 的表单栅格：窄屏一律塌成单列 */
+  [style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
+
+  .btn-icon,
+  .admin-tab,
+  .btn-card-action { min-height: 44px; min-width: 44px; }
+  .EasyMDEContainer .CodeMirror { min-height: 200px; }
+}
+
+@media (max-width: 420px) {
+  .admin-layout { padding: 8px; gap: 8px; }
+  .admin-card { padding: 10px !important; }
+  .navbar-container { padding: 0 8px !important; }
+}
+
+/* ============================================================
+   AI 补全过程面板（public/assets/js/ai-trace.js）
+   点「AI / 覆盖 / AI 补全后发布」之后显示这一轮的外呼对话，
+   替掉以前只有一个转圈圈的等待。
+   ============================================================ */
+.ai-trace-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2600;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(15, 23, 42, .38);
+  backdrop-filter: blur(2px);
+}
+
+.ai-trace-card {
+  width: min(720px, 100%);
+  max-height: min(68vh, 560px);
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-surface, #fff);
+  border: 1px solid var(--border-default, #e2e8f0);
+  border-radius: 14px;
+  box-shadow: 0 18px 48px rgba(15, 23, 42, .22);
+  overflow: hidden;
+}
+
+.ai-trace-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-subtle, #edf2f7);
+  font-size: .875rem;
+}
+
+.ai-trace-title { flex: 1; }
+
+.ai-trace-clock {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted, #64748b);
+  font-size: .8125rem;
+}
+
+.ai-trace-close {
+  border: 0;
+  background: transparent;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--text-muted, #64748b);
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+.ai-trace-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #2563eb;
+  animation: ai-trace-pulse 1.1s ease-in-out infinite;
+}
+.ai-trace-dot.is-idle { background: #94a3b8; animation: none; }
+.ai-trace-dot.is-ok { background: #16a34a; animation: none; }
+.ai-trace-dot.is-err,
+.ai-trace-dot.is-stale { background: #dc2626; animation: none; }
+
+@keyframes ai-trace-pulse {
+  0%, 100% { opacity: .35; transform: scale(.85); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+.ai-trace-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: .8125rem;
+  line-height: 1.5;
+}
+
+.ai-trace-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+  padding: 6px 9px;
+  border-radius: 9px;
+  background: var(--bg-subtle, #f6f8fb);
+}
+
+.ai-trace-who {
+  flex: 0 0 auto;
+  font-weight: 600;
+  font-size: .75rem;
+  color: var(--text-muted, #64748b);
+}
+
+.ai-trace-text { flex: 1 1 240px; word-break: break-word; }
+
+.ai-trace-ai { background: rgba(37, 99, 235, .07); }
+.ai-trace-tool { background: rgba(124, 58, 237, .07); }
+.ai-trace-ok { background: rgba(22, 163, 74, .09); }
+.ai-trace-warn { background: rgba(217, 119, 6, .09); }
+.ai-trace-err { background: rgba(220, 38, 38, .08); }
+
+.ai-trace-chip {
+  flex: 0 1 auto;
+  max-width: 100%;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, .18);
+  color: var(--text-muted, #64748b);
+  font-size: .75rem;
+  word-break: break-all;
+}
+
+.ai-trace-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  border-top: 1px solid var(--border-subtle, #edf2f7);
+  font-size: .8125rem;
+  color: var(--text-muted, #64748b);
+}
+
+.ai-trace-hint { flex: 1; }
+
+.ai-trace-refresh {
+  border: 1px solid var(--border-default, #e2e8f0);
+  border-radius: 8px;
+  background: var(--bg-surface, #fff);
+  padding: 5px 12px;
+  cursor: pointer;
+  font-size: .8125rem;
+}
+
+@media (max-width: 640px) {
+  .ai-trace-overlay { padding: 8px; align-items: flex-end; }
+  .ai-trace-card { max-height: 82vh; }
+}

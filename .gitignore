@@ -1,0 +1,36 @@
+# 构建产物与本地工具缓存
+dist/
+.agent/
+.qoder-credits/
+
+# Android 构建产物（Android App/.gitignore 里的 /build 是锚定的，盖不住 app/build）
+Android App/build/
+Android App/app/build/
+Android App/.gradle/
+Android App/app/.gradle/
+Android App/.kotlin/
+Android App/.idea/
+Android App/local.properties
+*.apk
+*.aab
+
+# 本机安装状态：装机后由 database/install.php 与网页向导生成，不该进版本库
+config/install.lock
+config/.env
+
+# SQLite 运行时旁路文件
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite-journal
+
+# 测试沙箱
+tests/.sandbox/
+tests/tmp/
+
+# 编辑器与系统杂项
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log

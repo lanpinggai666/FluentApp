@@ -1,0 +1,8 @@
+# 配置文件可能含环境变量与连接信息，禁止经 HTTP 访问
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>

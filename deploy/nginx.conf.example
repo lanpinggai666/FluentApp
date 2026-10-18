@@ -1,0 +1,69 @@
+# Nginx + PHP-FPM 站点示例。按机器改 server_name / 路径 / socket 名。
+# 关键点只有三个：root 指向 public/、try_files 交给 index.php、拦住隐藏文件与内部目录。
+
+server {
+    listen 80;
+    server_name example.com;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name example.com;
+
+    ssl_certificate     /etc/letsencrypt/live/example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;
+
+    root  /var/www/softnav/public;
+    index index.php;
+
+    client_max_body_size 8m;
+
+    # 伪静态规则：/software/<slug> 与 /category/<slug> 都交给 index.php，PATH_INFO 传进 PHP 后由 Router 解析。
+    # 说明：
+    #   - 站内链接什么时候变成这种形态，取决于后台【系统与AI设置】→「URL 伪静态」开关（默认关，见 DEPLOY.md）；
+    #   - 开关没开时，这两种地址照样能访问（只是站内还是 ?r= 链接），配好规则不会让现有站点出错；
+    #   - 落不到真实文件的路径统一回 index.php，$is_args$args 保证 ?r= 那套查询串原样带过去。
+    location / {
+        try_files $uri $uri/ /index.php$uri$is_args$args;
+    }
+
+    # 只放行 index.php / sitemap.php，且允许它们后面带路径（/index.php/software/a）
+    location ~ ^/(index|sitemap)\.php(/|$) {
+        include fastcgi_params;
+        fastcgi_split_path_info ^(.+?\.php)(/.*)$;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+        # 限流按 REMOTE_ADDR 判定，务必让 PHP 看到真实客户端 IP（不要让代理随便塞 X-Forwarded-*）
+        fastcgi_param REMOTE_ADDR $remote_addr;
+        fastcgi_read_timeout 30s;
+    }
+
+    location ~ \.php$ {
+        include fastcgi_params;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param REMOTE_ADDR $remote_addr;
+        fastcgi_read_timeout 30s;
+    }
+
+    # .env / 备份 / 数据文件一律不对外
+    location ~ /\. { deny all; }
+    location ~ \.(sql|sqlite|sqlite-wal|sqlite-shm|log|bak|orig|dev)$ { deny all; }
+
+    # 静态资源长缓存（CSS/JS 带 ?v=文件mtime，改样式会自动失效）
+    location ~* \.(css|js|svg|png|jpg|webp|woff2)$ {
+        expires 30d;
+        add_header Cache-Control "public";
+        try_files $uri =404;
+    }
+
+    location ~ ^/(config|core|models|services|controllers|views|tests|tools|database)/ {
+        return 404;
+    }
+
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Strict-Transport-Security "max-age=31536000" always;
+}

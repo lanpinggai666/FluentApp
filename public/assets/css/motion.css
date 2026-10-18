@@ -1,0 +1,361 @@
+/* ========================================================
+   微软 Fluent 2 极致平滑 View Transition 原生转场体系
+   ======================================================== */
+::view-transition-group(root) {
+  animation-duration: 0.32s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+::view-transition-old(root) {
+  animation: fluentRootFadeOut 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+::view-transition-new(root) {
+  animation: fluentRootFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+@keyframes fluentRootFadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes fluentRootFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 核心共享元素过渡：图标、标题、背景无缝平滑形变位移 */
+::view-transition-group(hero-icon) {
+  animation-duration: 0.38s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1000;
+}
+
+::view-transition-old(hero-icon),
+::view-transition-new(hero-icon) {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+  border-radius: 16px;
+  mix-blend-mode: normal;
+}
+
+::view-transition-group(hero-title) {
+  animation-duration: 0.36s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 999;
+}
+
+::view-transition-old(hero-title),
+::view-transition-new(hero-title) {
+  mix-blend-mode: normal;
+}
+
+::view-transition-group(hero-banner) {
+  animation-duration: 0.42s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 50;
+}
+
+/* ========================================================
+   卡片点击放大、文字与图标飞入详情页专属平滑转场体系
+   ======================================================== */
+.fluent-morph-portal {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 99999;
+  overflow: hidden;
+}
+
+.flying-bg-proxy {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1;
+  box-sizing: border-box;
+  will-change: left, top, width, height, border-radius, opacity;
+}
+
+.flying-icon-proxy {
+  position: fixed;
+  pointer-events: none;
+  z-index: 3;
+  object-fit: contain;
+  border-radius: 16px;
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 8px;
+  box-shadow: 0 10px 24px -4px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
+  will-change: left, top, width, height, border-radius;
+  box-sizing: border-box;
+}
+
+[data-theme="dark"] .flying-icon-proxy {
+  background: #202020;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
+}
+
+.flying-title-proxy {
+  position: fixed;
+  pointer-events: none;
+  z-index: 10002;
+  font-family: var(--font-fluent);
+  color: var(--text-primary);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  will-change: left, top, font-size, width;
+}
+
+
+/* 卡片点击微触感 */
+.software-card.card-launching {
+  transform: scale(0.96) !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08) !important;
+  opacity: 0.85;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+}
+
+.software-grid.is-launching .software-card:not(.card-launching) {
+  opacity: 0.35;
+  transform: scale(0.98);
+  filter: blur(0.5px);
+  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease, filter 0.32s ease;
+}
+
+/* 详情页组件按顺序立体排布进场动画 */
+.ms-content-column > .ms-card {
+  animation: fluentCardStagger 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.ms-content-column > .ms-card:nth-child(1) { animation-delay: 0.04s; }
+.ms-content-column > .ms-card:nth-child(2) { animation-delay: 0.08s; }
+.ms-content-column > .ms-card:nth-child(3) { animation-delay: 0.12s; }
+.ms-content-column > .ms-card:nth-child(4) { animation-delay: 0.16s; }
+
+.ms-sidebar-column {
+  animation: fluentCardStagger 0.36s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.12s;
+}
+
+@keyframes fluentCardStagger {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 标签胶囊微动效 */
+.tag-pill {
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.18s ease, color 0.18s ease;
+}
+.tag-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06);
+}
+.tag-pill:active {
+  transform: scale(0.96);
+}
+
+/* 徽章微动效 */
+.badge {
+  transition: transform 0.18s ease;
+}
+.badge:hover {
+  transform: translateY(-1px);
+}
+
+/* 悬浮按钮 */
+.fab-submit {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-pill);
+  background-color: var(--ms-blue);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(0, 103, 184, 0.35);
+  cursor: pointer;
+  z-index: 40;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, background-color 0.2s ease;
+  border: none;
+}
+.fab-submit:hover {
+  background-color: var(--ms-blue-hover);
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0, 103, 184, 0.45);
+}
+.fab-submit:active { 
+  transform: scale(0.94); 
+}
+
+/* 页脚 (极简 Fluent 纯净风格) */
+.footer {
+  margin-top: auto;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  padding: 18px 24px;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.footer-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer a:hover {
+  color: var(--text-link);
+}
+
+/* 响应式 */
+@media (max-width: 900px) {
+  .ms-body-grid {
+    grid-template-columns: 1fr;
+  }
+  .ms-info-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 移动端适配统一下沉至文件末尾「移动端适配层」，保证层叠优先级 */
+
+/* ========================================================
+   MICROSOFT FLUENT 2 现代化管理后台专属样式体系
+   ======================================================== */
+.admin-layout {
+  display: flex;
+  gap: 24px;
+  padding: 24px 32px 48px;
+  width: 100%;
+  max-width: 1560px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+  .admin-layout {
+    flex-direction: column;
+    padding: 16px;
+  }
+}
+
+.admin-sidebar {
+  width: 230px;
+  flex-shrink: 0;
+}
+
+.admin-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  box-shadow: var(--shadow-fluent);
+  margin-bottom: 20px;
+}
+
+.admin-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.admin-stat-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-fluent);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-fluent-hover);
+}
+
+.admin-stat-label {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-stat-val {
+  font-size: 1.875rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-top: 8px;
+  letter-spacing: -0.02em;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.admin-table th {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-default);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  text-align: left;
+}
+
+.admin-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.admin-table tr:hover td {
+  background-color: var(--bg-surface-hover);
+}
+
+.admin-tab {
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: var(--fluent-transition);
+}
+
+.admin-tab:hover {
+  background: var(--bg-surface-hover);
+  color: var(--text-primary);
+}
+
+.admin-tab.active {
+  background: var(--ms-blue-subtle);
+  color: var(--ms-blue);
+  font-weight: 600;
+}
+

@@ -1,0 +1,23 @@
+# Apache 虚拟主机示例：文档根直接指到 public/（首选方案，不需要项目根的 .htaccess）
+<VirtualHost *:443>
+    ServerName example.com
+    DocumentRoot /var/www/softnav/public
+
+    <Directory /var/www/softnav/public>
+        AllowOverride All
+        Require all granted
+        Options -Indexes
+    </Directory>
+
+    # 项目其余部分不在 DocumentRoot 内，天然不可达；额外再兜一层
+    <DirectoryMatch "/var/www/softnav/(config|core|models|services|controllers|views|tests|tools|database)">
+        Require all denied
+    </DirectoryMatch>
+
+    SSLEngine on
+    SSLCertificateFile    /etc/letsencrypt/live/example.com/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/example.com/privkey.pem
+    Header always set Strict-Transport-Security "max-age=31536000"
+
+    php_admin_flag engine on
+</VirtualHost>

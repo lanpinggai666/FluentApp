@@ -1,0 +1,22 @@
+# 生产文档根应指向本目录（public/）。这里只做两件事：关目录列表、拦隐藏文件。
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # 不存在的路径一律交给 index.php：?r= 形态与 /software/<slug> 伪静态形态都吃这一条
+    # （Router 会按 REQUEST_URI 认出 /software/<slug>，所以这里不拼 PATH_INFO 也没问题）
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+# .env、.git、备份文件等一律不对外
+<FilesMatch "^\.|\.(env|sql|sqlite|sqlite-wal|sqlite-shm|log|bak|orig|dev)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>

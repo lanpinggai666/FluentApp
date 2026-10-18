@@ -1,0 +1,8 @@
+# 数据库文件与迁移/诊断脚本一律禁止经 HTTP 访问（生产应把 web 根指向 public/，此处为误配兜底）
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>

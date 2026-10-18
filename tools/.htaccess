@@ -1,0 +1,8 @@
+# 开发调试脚本目录，任何时候都不应出现在生产服务器上
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>
